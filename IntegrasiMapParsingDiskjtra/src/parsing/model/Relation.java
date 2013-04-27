@@ -2,8 +2,6 @@ package parsing.model;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKBWriter;
 import java.util.ArrayList;
@@ -95,7 +93,7 @@ public class Relation extends AbstractNode {
 
     public String getShape() {
         Polygon pol = getPolygon();
-        return (pol != null) ? WKBWriter.bytesToHex(new WKBWriter().write(pol)) : null;
+        return (pol != null) ? WKBWriter.toHex(new WKBWriter().write(pol)) : null;
     }
 
     private boolean isWay(Member m) {

@@ -1,13 +1,15 @@
 package parsing.engineparsing;
 
-import parsing.model.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import parsing.model.OSMNode;
+import parsing.model.Way;
 
 /**
  *
@@ -25,7 +27,10 @@ public class WayParser {
         NamedNodeMap atts = wayNode.getAttributes();
 
         String id = atts.getNamedItem("id").getNodeValue();
-
+    	// Changed by Joris Maervoet, KaHoSL
+    	// Return null when referenced nodes are not listed as node        
+        List<OSMNode> nodeList = getNodes(wayNode.getChildNodes(), nodes);
+        if (nodeList==null) return null;
         way = new Way(
                 id,
                 getAttribute(atts, "visible"),
@@ -34,7 +39,7 @@ public class WayParser {
                 getAttribute(atts, "changeset"),
                 getAttribute(atts, "user"),
                 getAttribute(atts, "uid"),
-                getNodes(wayNode.getChildNodes(), nodes),
+                nodeList,
                 OSMParser.parseTags(wayNode.getChildNodes()));
 
         return way;
@@ -48,16 +53,28 @@ public class WayParser {
     }
 
     private static List<OSMNode> getNodes(NodeList children, Map<String, OSMNode> nodes) {
-        List<OSMNode> result = new LinkedList<OSMNode>();
+        List<OSMNode> result = new ArrayList<OSMNode>();
+
         Node node;
         String nodeName;
+        
         for (int i = 0; i < children.getLength(); i++) {
+            
             node = children.item(i);
             nodeName = node.getNodeName();
+
             if (nodeName.equals("nd")) {
-                result.add(nodes.get(node.getAttributes().getNamedItem("ref").getNodeValue()));
+
+            	// Changed by Joris Maervoet, KaHoSL
+            	// Return null when referenced nodes are not listed as node
+            	OSMNode oNode = nodes.get(node.getAttributes().
+                        getNamedItem("ref").getNodeValue());
+            	if (oNode==null) return null;
+            	result.add(oNode);
+                
             }
         }
+
         return result;
     }
 }

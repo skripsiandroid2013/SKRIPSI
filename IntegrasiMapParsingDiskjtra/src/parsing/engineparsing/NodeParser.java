@@ -4,21 +4,26 @@
  */
 package parsing.engineparsing;
 
-import parsing.model.*;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import parsing.model.OSMNode;
 
 /**
  *
  * @author zuq
  */
 public class NodeParser {
+
     public static boolean isNode(Node node) {
         return (node.getNodeName().equals("node"));
     }
+
     public static OSMNode parseNode(Node node) {
         NamedNodeMap atts = node.getAttributes();
+
         String id = atts.getNamedItem("id").getNodeValue();
+
         OSMNode osmNode = new OSMNode(id,
                 getAttribute(atts, "visible"),
                 getAttribute(atts, "timestamp"),

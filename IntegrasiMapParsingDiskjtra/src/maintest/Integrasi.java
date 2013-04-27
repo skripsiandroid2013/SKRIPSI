@@ -24,8 +24,12 @@ public class Integrasi {
 	private OSM osm;
 	private Set<Way> allJalan;
 
+	// fix graph
+	// coba build graph'e pake GraphBuilder
+	// file osm tak pindah nang folder data
 	public void bentukGraph() throws Exception {
-		osm = OSMParser.parse("src/maintest/testmap.osm");
+		
+		osm = OSMParser.parse("data/surabaya.osm");
 		allTempat=osm.getNodes();
 		allJalan=osm.getWays();
 
@@ -38,7 +42,7 @@ public class Integrasi {
 			banyakTempat++;
 		}
 		for (Way jalan : allJalan){
-			prosesSatu(jalan.getNodesJalan());
+			prosesSatu(jalan.getNodes());
 		}
 		for (Vertex v : vertexs){
 			System.out.println("ID : "+v.getId()+" Nama : "+v.getName());
@@ -64,6 +68,8 @@ public class Integrasi {
 		
 
 	}
+	
+
 	private void prosesSatu(List<OSMNode> nodesJalan) {
 		// TODO Auto-generated method stub
 		//System.out.println("Banyak node pada jalan : "+nodesJalan.size());

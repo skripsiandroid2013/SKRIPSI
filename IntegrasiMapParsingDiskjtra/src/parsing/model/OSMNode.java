@@ -19,29 +19,31 @@ public class OSMNode extends AbstractNode {
 
     public String lat;
     public String lon;
-    public String id;
+
     public OSMNode(String id, String visible, String timestamp, String version, String changeset, String user, String uid, String lat, String lon, Map<String, String> tags) {
         super(id, visible, timestamp, version, changeset, user, uid, tags);
         this.lat = lat;
         this.lon = lon;
         this.tags = tags;
-        this.id=id;
     }
 
-    public String getLocation() {
-        Point p = new GeometryFactory().createPoint(
-                new Coordinate(Double.valueOf(lat), Double.valueOf(lon)));
 
-        return WKBWriter.bytesToHex(new WKBWriter().write(p));
+
+	public String getLocation() {
+        Point p = new GeometryFactory().createPoint(
+                new Coordinate(Double.valueOf(lon), Double.valueOf(lat)));
+
+        return WKBWriter.toHex(new WKBWriter().write(p));
     }
     
+    //Added by Joris Maervoet, KaHoSL
     public Point getPoint() {
         Point p = new GeometryFactory().createPoint(
-                new Coordinate(Double.valueOf(lat), Double.valueOf(lon)));
+                new Coordinate(Double.valueOf(lon), Double.valueOf(lat)));
 
         return p;
     }
-    public String getId() {
-		return id;
-	}
+
+    
+    
 }

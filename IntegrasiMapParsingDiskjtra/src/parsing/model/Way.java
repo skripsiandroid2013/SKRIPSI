@@ -4,148 +4,225 @@
  */
 package parsing.model;
 
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.io.WKBWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import parsing.util.LatLongUtil;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.io.WKBWriter;
+
 /**
- *
+ * 
  * @author Willy Tiengo
  */
 public class Way extends AbstractNode {
 
-    // Constants ---------------------------------------------------------------
-    public static final String HIGHWAY = "highway";
-    //Attributes ---------------------------------------------------------------
-    public List<OSMNode> nodesJalan;
+	// Constants ---------------------------------------------------------------
+	public static final String HIGHWAY = "highway";
+	// Attributes
+	// ---------------------------------------------------------------
+	public List<OSMNode> nodes;
 
-    public List<OSMNode> getNodesJalan() {
-		return nodesJalan;
+	// Getter added by Joris Maervoet, KaHoSL
+	public List<OSMNode> getNodes() {
+		return nodes;
 	}
 
-	public Way(String id, String visible, String timestamp,
-            String version, String changeset, String user,
-            String uid, List<OSMNode> nodes, Map<String, String> tags) {
+	public Way(String id, String visible, String timestamp, String version,
+			String changeset, String user, String uid, List<OSMNode> nodes,
+			Map<String, String> tags) {
 
-        super(id, visible, timestamp, version, changeset, user, uid, tags);
-        this.nodesJalan = nodes;
-    }
+		super(id, visible, timestamp, version, changeset, user, uid, tags);
+		this.nodes = nodes;
+	}
 
-    public LineString getLineString() {
-        List<Coordinate> coords = new ArrayList<Coordinate>();
-        GeometryFactory fac = new GeometryFactory();
-        Coordinate c1;
-        for (OSMNode node : nodesJalan) {
-            c1 = new Coordinate(Double.parseDouble(node.lat), Double.parseDouble(node.lon));
-            coords.add(c1);
-        }
+	public LineString getLineString() {
+		List<Coordinate> coords = new ArrayList<Coordinate>();
+		GeometryFactory fac = new GeometryFactory();
 
-        return fac.createLineString(coords.toArray(new Coordinate[0]));
-    }
+		Coordinate c1;
+		for (OSMNode node : nodes) {
+			c1 = new Coordinate(Double.parseDouble(node.lon),
+					Double.parseDouble(node.lat));
+			coords.add(c1);
+		}
 
-    public boolean isHighway() {
-        return (tags.get(HIGHWAY) != null);
-    }
+		return fac.createLineString(coords.toArray(new Coordinate[0]));
+	}
 
-    public boolean isOneway() {
-        String oneway = tags.get("oneway");
-        return ((oneway != null) ? oneway.equals("yes") : false);
+	public boolean isHighway() {
+		return (tags.get(HIGHWAY) != null);
+	}
 
-    }
+	// Removed by Joris Maervoet, KaHoSL
+	/*
+	 * public boolean isOneway() { String oneway = tags.get("oneway");
+	 * 
+	 * return ((oneway != null) ? oneway.equals("yes") : false);
+	 * 
+	 * }
+	 */
 
-    public String getName() {
-        return tags.get("name");
-    }
+	// Added by Joris Maervoet, KaHoSL
+	public int getOnewayDirection() {
+		String oneway = tags.get("oneway");
+		if (oneway != null) {
+			if ((oneway.equals("yes")) || (oneway.equals("true"))
+					|| (oneway.equals("1"))) {
+				return 1;
+			}
+			if (oneway.equals("-1")) {
+				return -1;
+			}
+			if ((oneway.equals("no")) || (oneway.equals("false"))
+					|| (oneway.equals("0"))) {
+				return 0;
+			}
+		}
+		String junction = tags.get("junction");
+		if ((junction != null) && (junction.equals("roundabout"))) {
+			return 1;
+		}
+		String highway = tags.get("highway");
+		if ((highway != null) && (highway.equals("motorway_link"))) {
+			return 1;
+		}
+		return 0;
+	}
 
-    public String getWayMiddle() {
-        double lenMiddle, distance, lineDistance;
-        GeometryFactory fac = new GeometryFactory();
+	// Added by Joris Maervoet, KaHoSL
+	public boolean isAccessibleByCar() {
+		String highway = tags.get("highway");
+		if (highway != null) {
+			if ((highway.equals("bridleway"))
+					|| (highway.equals("bus_guideway"))
+					|| (highway.equals("construction"))
+					|| (highway.equals("cycleway"))
+					|| (highway.equals("footway")) 
+					|| (highway.equals("path"))
+					|| (highway.equals("pedestrian"))
+					|| (highway.equals("proposed"))
+					|| (highway.equals("raceway"))
+					|| (highway.equals("service")) 
+					|| (highway.equals("steps"))) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
 
-        OSMNode n1 = null, n2 = null;
+	// Added by Joris Maervoet, KaHoSL
+	public String getMaxSpeed() {
+		return tags.get("maxspeed");
+	}
 
-        lenMiddle = wayLength(nodesJalan) / 2;
-        distance = 0d;
+	public String getName() {
+		return tags.get("name");
+	}
 
-        for (int i = 0; i < nodesJalan.size() - 1; i++) {
+	public String getWayMiddle() {
+		double lenMiddle, distance, lineDistance;
+		GeometryFactory fac = new GeometryFactory();
 
-            n1 = nodesJalan.get(i);
-            n2 = nodesJalan.get(i + 1);
+		OSMNode n1 = null, n2 = null;
 
-            lineDistance = lineDistance(n1, n2);
+		lenMiddle = wayLength(nodes) / 2;
+		distance = 0d;
 
-            if ((distance + lineDistance) > lenMiddle) {
-                distance = (lenMiddle - distance) / lineDistance;
-                break;
-            }
+		for (int i = 0; i < nodes.size() - 1; i++) {
 
-            distance += lineDistance;
-        }
+			n1 = nodes.get(i);
+			n2 = nodes.get(i + 1);
 
-        double lat = Double.parseDouble(n2.lat);
-        double lon = Double.parseDouble(n2.lon);
+			lineDistance = lineDistance(n1, n2);
 
-        if (distance > 0.0d) {
-            distance = (1 / distance);
+			if ((distance + lineDistance) > lenMiddle) {
+				distance = (lenMiddle - distance) / lineDistance;
+				break;
+			}
 
-            // Baseado na prova do ponto médio
-            lat = (Double.parseDouble(n2.lat) + (distance - 1) * Double.parseDouble(n1.lat)) / distance;
-            lon = (Double.parseDouble(n2.lon) + (distance - 1) * Double.parseDouble(n1.lon)) / distance;
-        }
+			distance += lineDistance;
+		}
 
-        return WKBWriter.bytesToHex( new WKBWriter().write(fac.createPoint(new Coordinate(lon, lat))));
-    }
+		double lat = Double.parseDouble(n2.lat);
+		double lon = Double.parseDouble(n2.lon);
 
-    public double getWayLength() {
-        return wayLength(nodesJalan);
-    }
+		if (distance > 0.0d) {
+			distance = (1 / distance);
 
-    public String getType() {
-        return tags.get(HIGHWAY);
-    }
+			// Baseado na prova do ponto médio
+			lat = (Double.parseDouble(n2.lat) + (distance - 1)
+					* Double.parseDouble(n1.lat))
+					/ distance;
+			lon = (Double.parseDouble(n2.lon) + (distance - 1)
+					* Double.parseDouble(n1.lon))
+					/ distance;
+		}
 
-    public String getShape() throws Exception {
-        MultiLineString mls;
+		return WKBWriter.toHex(new WKBWriter().write(fac
+				.createPoint(new Coordinate(lon, lat))));
+	}
 
-        // Precisa ser um MultiLineString
-        mls = new GeometryFactory().createMultiLineString(
-                new LineString[] { getLineString() });
+	public double getWayLength() {
+		return wayLength(nodes);
+	}
 
-        return WKBWriter.bytesToHex(new WKBWriter().write(mls));
-    }
+	// Added by Joris Maervoet, KaHoSL
+	public double getWayPartLength(int fromIndex, int toIndex) {
 
-    public String getAltNames() {
-        return tags.get("alt_name");
-    }
-    
-    // Private methods ---------------------------------------------------------
-    private double wayLength(List<OSMNode> nodes) {
-        double length = 0d;
-        OSMNode n1, n2 = null;
-        n1 = nodes.get(0);
-        for (int i = 1; i < nodes.size(); i++) {
-            n2 = nodes.get(i);
-            length += LatLongUtil.distance(
-                    Double.parseDouble(n1.lat), Double.parseDouble(n1.lon),
-                    Double.parseDouble(n2.lat), Double.parseDouble(n2.lon));
-            n1 = n2;
-        }
-        System.out.println("panjang : "+n1.id+" ke "+n2.id+" adalah "+length);
-        return length;
-    }
+		return wayLength(nodes.subList(fromIndex, toIndex));
+	}
 
-    private static Double lineDistance(OSMNode n1, OSMNode n2) {
+	public String getType() {
+		return tags.get(HIGHWAY);
+	}
 
-        return LatLongUtil.distance(
-                Double.parseDouble(n1.lat), Double.parseDouble(n1.lon),
-                Double.parseDouble(n2.lat), Double.parseDouble(n2.lon));
+	public String getShape() throws Exception {
+		MultiLineString mls;
 
-    }
+		// Precisa ser um MultiLineString
+		mls = new GeometryFactory()
+				.createMultiLineString(new LineString[] { getLineString() });
+
+		return WKBWriter.toHex(new WKBWriter().write(mls));
+	}
+
+	public String getAltNames() {
+		return tags.get("alt_name");
+	}
+
+	// Private methods ---------------------------------------------------------
+	private double wayLength(List<OSMNode> nodes) {
+		double length = 0d;
+		OSMNode n1, n2;
+
+		n1 = nodes.get(0);
+
+		for (int i = 1; i < nodes.size(); i++) {
+			n2 = nodes.get(i);
+
+			length += LatLongUtil.distance(Double.parseDouble(n1.lat),
+					Double.parseDouble(n1.lon), Double.parseDouble(n2.lat),
+					Double.parseDouble(n2.lon));
+
+			n1 = n2;
+		}
+
+		return length;
+	}
+
+	private static Double lineDistance(OSMNode n1, OSMNode n2) {
+
+		return LatLongUtil.distance(Double.parseDouble(n1.lat),
+				Double.parseDouble(n1.lon), Double.parseDouble(n2.lat),
+				Double.parseDouble(n2.lon));
+
+	}
 }

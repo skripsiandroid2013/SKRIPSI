@@ -9,14 +9,15 @@ import java.util.Map;
 public class AbstractNode {
 
     public String id;
-	public String visible;
+    public String visible;
     public String timestamp;
     public String version;
     public String changeset;
     public String user;
     public String uid;
-    public Map<String, String> tags;
+	public Map<String, String> tags;
 
+	
     public AbstractNode(String id, String visible, String timestamp,
             String version, String changeset, String user, String uid,
             Map<String, String> tags) {
@@ -51,5 +52,38 @@ public class AbstractNode {
     public int hashCode() {
         return (id != null ? id.hashCode() : super.hashCode());
     }
+    
+    //Getters added by Joris Maervoet, KaHoSL
+    public String getId() {
+		return id;
+	}
+
+	public String getVisible() {
+		return visible;
+	}
+
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public String getChangeset() {
+		return changeset;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public Map<String, String> getTags() {
+		return tags;
+	}    
     
 }
