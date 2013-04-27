@@ -1,8 +1,9 @@
 package astar.model;
 
 public  class Key {
-	
+	//latitude
 	  private final String x;
+	  //longitude
 	    private final String y;
 
 	    public Key(String x, String y) {
