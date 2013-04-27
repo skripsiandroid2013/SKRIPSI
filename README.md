@@ -1,5 +1,6 @@
 SKRIPSI
 =======
-ALGORITMA A-STAR
+ALGORITMA A-STAR fork from
 -------------------------
- * Algoritma a-star = http://www.vogella.com/articles/JavaAlgorithmsDijkstra/article.html
+ *  http://www.vogella.com/articles/JavaAlgorithmsDijkstra/article.html
+ *  http://code.google.com/p/a-star-java/source/browse/#svn%2FAStar
