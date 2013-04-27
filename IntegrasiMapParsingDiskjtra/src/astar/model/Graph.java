@@ -1,6 +1,5 @@
 package astar.model;
 
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,49 +9,61 @@ import parsing.model.OSMNode;
 
 
 public class Graph {
-	
-	private HashMap<String, Vertex> vertices = new HashMap<>();
-		
-	public void addEdge(OSMNode fromNode, OSMNode toNode, double jarak, String edgeId)
-	{
-		Vertex fromVertex = vertices.get(fromNode.id);
+
+	private HashMap<Key, Vertex>  vertices = new HashMap<>();
+
+	public void addEdge(OSMNode fromNode, OSMNode toNode, double jarak,
+			String edgeId) {
+		Vertex fromVertex = vertices.get(new Key(fromNode.lat, fromNode.lon));
 		if (fromVertex == null) {
 			fromVertex = new Vertex(fromNode);
-			vertices.put(fromNode.id, fromVertex);
+			
+			putLatLon(fromNode.lat, fromNode.lon, fromVertex);
+			
+		//	System.out.println(vertices.keySet());
+
 		}
-		Vertex toVertex = vertices.get(toNode.id);
+		Vertex toVertex = vertices.get(new Key(toNode.lat, toNode.lon));
 		if (toVertex == null) {
 			toVertex = new Vertex(toNode);
-			vertices.put(toNode.id, toVertex);
+			putLatLon(toNode.lat, toNode.lon, toVertex);
 		}
-		fromVertex.adjacencies.add(new Edge(fromVertex, toVertex, jarak, edgeId));
+		fromVertex.adjacencies
+				.add(new Edge(fromVertex, toVertex, jarak, edgeId));
 	}
-	
-	public int getSize()
-	{
+
+	public int getSize() {
 		return vertices.size();
 	}
-	
-	public Collection<Vertex> getVertexs(){
+
+	public Collection<Vertex> getVertexs() {
 		return vertices.values();
 	}
-	
+
 	public Collection<Edge> getEdges() {
 		List<Edge> edges = new LinkedList<>();
-		for(Vertex vertex : vertices.values()){
-			for (Edge edge : vertex.adjacencies){
+		for (Vertex vertex : vertices.values()) {
+			for (Edge edge : vertex.adjacencies) {
 				edges.add(edge);
 			}
 		}
 		return edges;
 	}
 
-	public Vertex fromVertex(String id) {
-		
+	public Vertex fromVertex(Key id) {
+
 		return vertices.get(id);
 	}
 
-	public Vertex toVertex(String id) {
+	public Vertex toVertex(Key id) {
 		return vertices.get(id);
 	}
+
+	private void putLatLon(String lat, String lon,
+			Vertex value) {
+
+		Key key = new Key(lat, lon);
+		vertices.put(key, value);
+	}
+
 }

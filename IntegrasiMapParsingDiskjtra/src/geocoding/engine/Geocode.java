@@ -46,8 +46,8 @@ public class Geocode {
         String citi = temp[6];
         
         String response[] = {lati, longi};
-        System.out.println(response[0]);
-        System.out.println(response[1]);
+//        System.out.println(response[0]);
+//        System.out.println(response[1]);
 
        return response;
     }

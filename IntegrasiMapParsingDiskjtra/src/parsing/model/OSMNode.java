@@ -44,6 +44,17 @@ public class OSMNode extends AbstractNode {
         return p;
     }
 
+
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		final OSMNode other = (OSMNode) obj;
+
+        return super.equals(lat != null && lon !=null ? lat.equals(other.lat) && lon.equals(other.lon) : false);
+	
+	}
+
     
     
 }

@@ -1,10 +1,12 @@
 package astar.test;
 import java.util.LinkedList;
 
+
 import org.junit.Test;
 import astar.engine.Dijkstra;
 import astar.graph.builder.GraphBuilder;
 import astar.model.Graph;
+import astar.model.Key;
 import astar.model.Vertex;
 
 public class TestDijkstra {
@@ -16,9 +18,10 @@ public class TestDijkstra {
 	
 		Dijkstra dijkstra = new Dijkstra(graph);
 		
-		dijkstra.execute(graph.fromVertex("1357523729"));
+		dijkstra.execute(graph.fromVertex(new Key("-7.3161762","112.7918078")));
 		
-		LinkedList<Vertex> path = dijkstra.getPath(graph.toVertex("1357523975"));
+		LinkedList<Vertex> path = dijkstra.getPath(graph.toVertex(new Key("-7.3164693","112.7903005")));
+		
 		System.out.print("[");
 		for (Vertex vertex : path) {
 			System.out.print(vertex + ", ");

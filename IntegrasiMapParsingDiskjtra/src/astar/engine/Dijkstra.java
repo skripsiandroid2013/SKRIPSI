@@ -13,9 +13,9 @@ import astar.model.Edge;
 import astar.model.Graph;
 import astar.model.Vertex;
 
-// integrasi dijkstra'e vogella pake astar model
 public class Dijkstra {
 
+	private final List<Vertex> nodes;
 	private final List<Edge> edges;
 	private Set<Vertex> settledNodes;
 	private Set<Vertex> unSettledNodes;
@@ -23,7 +23,8 @@ public class Dijkstra {
 	private Map<Vertex, Double> distance;
 
 	public Dijkstra(Graph graph) {
-		new ArrayList<Vertex>(graph.getVertexs());
+		// Create a copy of the array so that we can operate on this array
+		this.nodes = new ArrayList<Vertex>(graph.getVertexs());
 		this.edges = new ArrayList<Edge>(graph.getEdges());
 	}
 
@@ -65,7 +66,7 @@ public class Dijkstra {
 			return d;
 		}
 	}
-	
+
 	private void findMinimalDistances(Vertex node) {
 		List<Vertex> adjacentNodes = getNeighbors(node);
 		for (Vertex target : adjacentNodes) {
@@ -105,7 +106,7 @@ public class Dijkstra {
 		return settledNodes.contains(vertex);
 	}
 
-	
+
 
 	/*
 	 * This method returns the path from the source to the selected target and

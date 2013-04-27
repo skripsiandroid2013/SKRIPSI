@@ -1,19 +1,17 @@
 package astar.test;
 
-import static org.junit.Assert.assertNotNull;
-
 import geocoding.engine.Geocode;
 
 import java.util.LinkedList;
 
 import org.junit.Test;
 
-import parsing.model.OSMNode;
 import astar.engine.AStar;
 import astar.engine.AStarHeuristic;
 import astar.engine.EuclidianHeuristic;
 import astar.graph.builder.GraphBuilder;
 import astar.model.Graph;
+import astar.model.Key;
 import astar.model.Vertex;
 
 public class TestAstar {
@@ -24,25 +22,19 @@ public class TestAstar {
 		GraphBuilder builder = new GraphBuilder("data/surabaya.osm");
 				
 		Graph graph = builder.getGraph();
-		assertNotNull("graph not null", graph);
 		
 		AStarHeuristic heuristic = new EuclidianHeuristic();
 		AStar aStar = new AStar(graph, heuristic);
+
+		String [] location = Geocode.request();
+		System.out.println(location[0]+", "+location[1]);
 		
-		String[] latlan = Geocode.request();
+		Vertex start = graph.fromVertex(new Key("-7.3161762","112.7918078"));
+		System.out.println(start.getNode().lat+","+start.getNode().lon);
 		
-		Vertex myLocation = null;	
-		for(Vertex vertex : graph.getVertexs()){
-			OSMNode n = vertex.getNode();
-			System.out.println(n.lat+" , "+n.lon);
-			if(n.lat.equals("-7.3436905") && n.lon.equals("112.695374") ){
-				myLocation = vertex;
-			}
-		}
+		Vertex goal = graph.toVertex(new Key("-7.3164693","112.7903005"));
+		System.out.println(goal.getNode().lat+","+goal.getNode().lon);
 		
-		Vertex start = graph.fromVertex(""+myLocation.toString());
-		
-		Vertex goal = graph.toVertex("1357523975");
 		aStar.execute(start, goal);
 
 		LinkedList<Vertex> path = aStar.getPath();

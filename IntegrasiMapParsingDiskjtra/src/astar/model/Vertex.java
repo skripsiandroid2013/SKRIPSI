@@ -18,7 +18,8 @@ public class Vertex implements Comparable<Vertex> {
 	public Vertex(OSMNode node) {
 		this.setNode(node);
 	}
-
+	
+	
 	@Override
 	public String toString() {
 		return node.id;

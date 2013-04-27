@@ -146,6 +146,7 @@ public class AStar {
 		Vertex step = goal;
 		// Check if a path exists
 		if (predecessors.get(step) == null) {
+			System.out.println("no path");
 			return null;
 		}
 		path.add(step);
