@@ -6,6 +6,9 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import parsing.model.OSMNode;
+import parsing.util.LatLongUtil;
+
 import astar.engine.AStar;
 import astar.engine.AStarHeuristic;
 import astar.engine.EuclidianHeuristic;
@@ -29,21 +32,49 @@ public class TestAstar {
 		String [] location = Geocode.request();
 		System.out.println(location[0]+", "+location[1]);
 		
-		Vertex start = graph.fromVertex(new Key("-7.3161762","112.7918078"));
-		System.out.println(start.getNode().lat+","+start.getNode().lon);
+		
+		//Match
+		int i=0;
+		OSMNode hasilAkjhir=null;
+		for (Vertex vertex : graph.getVertexs()){
+			OSMNode node = vertex.getNode();
+			double jarak=0;
+			if(i!=0){
+				if(jarak<LatLongUtil.distance(Double.parseDouble(location[0]), Double.parseDouble(location[1]), 
+						Double.parseDouble(node.lat), Double.parseDouble(node.lon))){
+					hasilAkjhir=node;
+					jarak=LatLongUtil.distance(Double.parseDouble(location[0]), Double.parseDouble(location[1]), 
+							Double.parseDouble(node.lat), Double.parseDouble(node.lon));
+				//	System.out.println("x"+jarak);
+				}
+			}else{
+				jarak=LatLongUtil.distance(Double.parseDouble(location[0]), Double.parseDouble(location[1]), 
+						Double.parseDouble(node.lat), Double.parseDouble(node.lon));
+			//	System.out.println("a"+jarak);
+			}
+			i++;
+		}
+		
+		//
+		
+		
+		Vertex start = graph.fromVertex(new Key(hasilAkjhir.lat, hasilAkjhir.lon));
 		
 		Vertex goal = graph.toVertex(new Key("-7.3164693","112.7903005"));
-		System.out.println(goal.getNode().lat+","+goal.getNode().lon);
 		
 		aStar.execute(start, goal);
 
 		LinkedList<Vertex> path = aStar.getPath();
-		System.out.print("[");
+//		System.out.print("[");
+//		for (Vertex vertex : path) {
+//			System.out.print(vertex+ ", ");
+//		}
+//		System.out.print("]");
+//		System.out.println();
+		
 		for (Vertex vertex : path) {
-			System.out.print(vertex+ ", ");
-		}
-		System.out.print("]");
-		System.out.println();
+		System.out.println(vertex.getNode().lat+ ","+vertex.getNode().lon);
+	}
 	}
 
 }
