@@ -35,7 +35,6 @@ public class TestGraph {
 					if(i<50){
 						System.out.println("x"+jarak);
 					}
-					
 				}else{
 					if(i<50){
 						System.out.println("xxx"+jarak);
@@ -52,7 +51,7 @@ public class TestGraph {
 			}
 			i++;
 		}
-	
+		System.out.println("banyak node dihitung : "+i);
 		System.out.println(hasilAkjhir.id);
 		
 		
