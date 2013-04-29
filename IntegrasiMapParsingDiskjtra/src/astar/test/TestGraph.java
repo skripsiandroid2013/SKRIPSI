@@ -23,21 +23,32 @@ public class TestGraph {
 		double lon = 112.751;
 		int i=0;
 		OSMNode hasilAkjhir=null;
+		double jarak=0;
 		for (Vertex vertex : graph.getVertexs()){
 			OSMNode node = vertex.getNode();
-			double jarak=0;
 			if(i!=0){
 				if(jarak<LatLongUtil.distance(lat, lon, 
 						Double.parseDouble(node.lat), Double.parseDouble(node.lon))){
 					hasilAkjhir=node;
 					jarak=LatLongUtil.distance(lat, lon, 
 							Double.parseDouble(node.lat), Double.parseDouble(node.lon));
-					System.out.println("x"+jarak);
+					if(i<50){
+						System.out.println("x"+jarak);
+					}
+					
+				}else{
+					if(i<50){
+						System.out.println("xxx"+jarak);
+					}
+					
 				}
 			}else{
 				jarak=LatLongUtil.distance(lat, lon, 
 						Double.parseDouble(node.lat), Double.parseDouble(node.lon));
-				System.out.println("a"+jarak);
+				if(i<50){
+					System.out.println("a"+jarak);
+				}
+				
 			}
 			i++;
 		}
